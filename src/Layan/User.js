@@ -1,101 +1,251 @@
-import { useState } from 'react';
-import { Search, Filter, Users, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Search, Filter, Users, CheckCircle, Clock, AlertCircle, Edit2, Save, X, Plus, Trash2, Upload } from 'lucide-react';
 import './User.css';
 
 function User() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDepartment, setFilterDepartment] = useState('All');
   const [sortBy, setSortBy] = useState('name');
-  
-  const [employees] = useState([
-    {
-      id: 1,
-      name: "Sarah Ahmed",
-      photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
-      department: "Frontend Developer",
-      tasksCompleted: 8,
-      totalTasks: 10,
-      status: "Active",
-      tasks: [
-        { name: "Design Homepage", status: "completed", progress: 100 },
-        { name: "Build Dashboard", status: "completed", progress: 100 },
-        { name: "User Authentication UI", status: "in-progress", progress: 65 },
-        { name: "Responsive Design", status: "pending", progress: 0 }
-      ]
-    },
-    {
-      id: 2,
-      name: "Mohammad Ali",
-      photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
-      department: "Backend Developer",
-      tasksCompleted: 6,
-      totalTasks: 8,
-      status: "Active",
-      tasks: [
-        { name: "API Development", status: "completed", progress: 100 },
-        { name: "Database Setup", status: "completed", progress: 100 },
-        { name: "Authentication Logic", status: "in-progress", progress: 50 },
-        { name: "Testing APIs", status: "delayed", progress: 20 }
-      ]
-    },
-    {
-      id: 3,
-      name: "Layla Hassan",
-      photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop",
-      department: "UI/UX Designer",
-      tasksCompleted: 5,
-      totalTasks: 6,
-      status: "Active",
-      tasks: [
-        { name: "Wireframe Design", status: "completed", progress: 100 },
-        { name: "Prototype Creation", status: "completed", progress: 100 },
-        { name: "User Testing", status: "in-progress", progress: 70 }
-      ]
-    },
-    {
-      id: 4,
-      name: "Ahmed Khalil",
-      photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop",
-      department: "Frontend Developer",
-      tasksCompleted: 7,
-      totalTasks: 9,
-      status: "Busy",
-      tasks: [
-        { name: "Component Library", status: "completed", progress: 100 },
-        { name: "Responsive Design", status: "in-progress", progress: 80 },
-        { name: "Testing", status: "pending", progress: 0 }
-      ]
-    },
-    {
-      id: 5,
-      name: "Noor Ibrahim",
-      photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop",
-      department: "Backend Developer",
-      tasksCompleted: 4,
-      totalTasks: 7,
-      status: "Active",
-      tasks: [
-        { name: "Server Configuration", status: "completed", progress: 100 },
-        { name: "API Endpoints", status: "in-progress", progress: 60 },
-        { name: "Database Optimization", status: "pending", progress: 0 },
-        { name: "Security Implementation", status: "delayed", progress: 15 }
-      ]
-    },
-    {
-      id: 6,
-      name: "Omar Fadi",
-      photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
-      department: "UI/UX Designer",
-      tasksCompleted: 6,
-      totalTasks: 6,
-      status: "Active",
-      tasks: [
-        { name: "Style Guide", status: "completed", progress: 100 },
-        { name: "Icon Design", status: "completed", progress: 100 },
-        { name: "Brand Guidelines", status: "completed", progress: 100 }
-      ]
-    }
+  const [editingId, setEditingId] = useState(null);
+  const [editedEmployee, setEditedEmployee] = useState(null);
+  const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [newEmployee, setNewEmployee] = useState({
+    name: "",
+    photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+    department: "Frontend Developer",
+    status: "Active",
+    tasks: [
+      { id: Date.now(), name: "New Task", status: "pending", progress: 0 }
+    ],
+    tasksCompleted: 0,
+    totalTasks: 1
+  });
+  const fileInputRef = useRef(null);
+  const newEmployeeFileInputRef = useRef(null);
+
+  const [employees, setEmployees] = useState([
   ]);
+
+  // Delete employee handler
+  const handleDeleteEmployee = (employeeId) => {
+    if (window.confirm('Are you sure you want to delete this employee?')) {
+      setEmployees(employees.filter(emp => emp.id !== employeeId));
+      if (editingId === employeeId) {
+        setEditingId(null);
+        setEditedEmployee(null);
+      }
+    }
+  };
+
+  // Edit handlers
+  const handleEdit = (employee) => {
+    setEditingId(employee.id);
+    setEditedEmployee(JSON.parse(JSON.stringify(employee)));
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditedEmployee(null);
+  };
+
+  const handleSave = () => {
+    setEmployees(employees.map(emp => 
+      emp.id === editingId ? editedEmployee : emp
+    ));
+    setEditingId(null);
+    setEditedEmployee(null);
+  };
+
+  // Add new employee handlers
+  const handleAddEmployee = () => {
+    setShowAddEmployee(true);
+  };
+
+  const handleSaveNewEmployee = () => {
+    const employeeToAdd = {
+      ...newEmployee,
+      id: Date.now(), // Generate unique ID
+      tasksCompleted: newEmployee.tasks.filter(t => t.status === 'completed').length,
+      totalTasks: newEmployee.tasks.length
+    };
+
+    setEmployees([...employees, employeeToAdd]);
+    setShowAddEmployee(false);
+    resetNewEmployee();
+  };
+
+  const handleCancelNewEmployee = () => {
+    setShowAddEmployee(false);
+    resetNewEmployee();
+  };
+
+  const resetNewEmployee = () => {
+    setNewEmployee({
+      name: "",
+      photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+      department: "Frontend Developer",
+      status: "Active",
+      tasks: [
+        { id: Date.now(), name: "New Task", status: "pending", progress: 0 }
+      ],
+      tasksCompleted: 0,
+      totalTasks: 1
+    });
+  };
+
+  const updateNewEmployeeField = (field, value) => {
+    setNewEmployee({...newEmployee, [field]: value});
+  };
+
+  const updateNewEmployeeTask = (taskIndex, field, value) => {
+    const updatedTasks = [...newEmployee.tasks];
+    updatedTasks[taskIndex] = {...updatedTasks[taskIndex], [field]: value};
+    
+    if (field === 'status') {
+      if (value === 'completed') updatedTasks[taskIndex].progress = 100;
+      else if (value === 'pending') updatedTasks[taskIndex].progress = 0;
+    }
+    
+    setNewEmployee({
+      ...newEmployee, 
+      tasks: updatedTasks
+    });
+  };
+
+  const addNewTask = () => {
+    const newTask = {
+      id: Date.now(),
+      name: "New Task",
+      status: "pending",
+      progress: 0
+    };
+    
+    setNewEmployee({
+      ...newEmployee,
+      tasks: [...newEmployee.tasks, newTask]
+    });
+  };
+
+  const removeNewTask = (taskIndex) => {
+    const updatedTasks = newEmployee.tasks.filter((_, idx) => idx !== taskIndex);
+    setNewEmployee({
+      ...newEmployee,
+      tasks: updatedTasks
+    });
+  };
+
+  const updateEmployeeField = (field, value) => {
+    setEditedEmployee({...editedEmployee, [field]: value});
+  };
+
+  const updateTask = (taskIndex, field, value) => {
+    const updatedTasks = [...editedEmployee.tasks];
+    updatedTasks[taskIndex] = {...updatedTasks[taskIndex], [field]: value};
+    
+    // Update progress based on status
+    if (field === 'status') {
+      if (value === 'completed') updatedTasks[taskIndex].progress = 100;
+      else if (value === 'pending') updatedTasks[taskIndex].progress = 0;
+    }
+    
+    // Recalculate tasksCompleted and totalTasks
+    const completed = updatedTasks.filter(t => t.status === 'completed').length;
+    
+    setEditedEmployee({
+      ...editedEmployee, 
+      tasks: updatedTasks,
+      tasksCompleted: completed,
+      totalTasks: updatedTasks.length
+    });
+  };
+
+  const addTask = () => {
+    const newTask = {
+      id: Date.now(),
+      name: "New Task",
+      status: "pending",
+      progress: 0
+    };
+    
+    const updatedTasks = [...editedEmployee.tasks, newTask];
+    const completed = updatedTasks.filter(t => t.status === 'completed').length;
+    
+    setEditedEmployee({
+      ...editedEmployee,
+      tasks: updatedTasks,
+      totalTasks: updatedTasks.length,
+      tasksCompleted: completed
+    });
+  };
+
+  const removeTask = (taskIndex) => {
+    const updatedTasks = editedEmployee.tasks.filter((_, idx) => idx !== taskIndex);
+    const completed = updatedTasks.filter(t => t.status === 'completed').length;
+    
+    setEditedEmployee({
+      ...editedEmployee,
+      tasks: updatedTasks,
+      totalTasks: updatedTasks.length,
+      tasksCompleted: completed
+    });
+  };
+
+  // Image upload handlers
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Please select an image smaller than 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setEditedEmployee({
+          ...editedEmployee,
+          photo: e.target.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNewEmployeeImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Please select an image smaller than 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setNewEmployee({
+          ...newEmployee,
+          photo: e.target.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const triggerNewEmployeeFileInput = () => {
+    newEmployeeFileInputRef.current?.click();
+  };
 
   // Filter and search logic
   const filteredEmployees = employees
@@ -159,6 +309,8 @@ function User() {
     return classes[status] || 'task-progress-bar progress-pending';
   };
 
+  const newEmployeeProgress = Math.round((newEmployee.tasks.filter(t => t.status === 'completed').length / newEmployee.tasks.length) * 100);
+
   return (
     <div className="user-page">
       {/* Header */}
@@ -168,7 +320,6 @@ function User() {
             <div className="header-left">
               <div className="logo-section">
                 <div className="logo-glow-effect"></div>
-                {/* Replaced SVG with Image */}
                 <img 
                   src={require('../img/logoTechnosoft.jpeg')} 
                   alt="TechnoSoft Logo" 
@@ -279,44 +430,323 @@ function User() {
               <option value="name">Sort by Name</option>
               <option value="progress">Sort by Progress</option>
             </select>
+
+            <button 
+              onClick={handleAddEmployee}
+              className="add-employee-button"
+            >
+              <Plus size={20} />
+              Add Employee
+            </button>
           </div>
         </div>
 
         {/* Employee Cards Grid */}
         <div className="employees-grid">
+          {/* Add New Employee Card */}
+          {showAddEmployee && (
+            <div className="employee-card adding">
+              {/* Card Header */}
+              <div className="card-header">
+                <select 
+                  value={newEmployee.status}
+                  onChange={(e) => updateNewEmployeeField('status', e.target.value)}
+                  className="edit-status-select"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Busy">Busy</option>
+                </select>
+                
+                <div className="employee-photo-wrapper">
+                  <div className="photo-glow"></div>
+                  <img src={newEmployee.photo} alt="New Employee" className="employee-photo" />
+                  
+                  <div className="photo-upload-overlay">
+                    <button 
+                      type="button"
+                      onClick={triggerNewEmployeeFileInput}
+                      className="upload-photo-button"
+                    >
+                      <Upload size={20} />
+                      Change Photo
+                    </button>
+                    <input
+                      type="file"
+                      ref={newEmployeeFileInputRef}
+                      onChange={handleNewEmployeeImageUpload}
+                      accept="image/*"
+                      className="photo-file-input"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="card-body">
+                <input
+                  type="text"
+                  value={newEmployee.name}
+                  onChange={(e) => updateNewEmployeeField('name', e.target.value)}
+                  className="edit-name-input"
+                  placeholder="Enter employee name"
+                />
+                
+                <select
+                  value={newEmployee.department}
+                  onChange={(e) => updateNewEmployeeField('department', e.target.value)}
+                  className="edit-department-select"
+                >
+                  <option value="Frontend Developer">Frontend Developer</option>
+                  <option value="Backend Developer">Backend Developer</option>
+                  <option value="UI/UX Designer">UI/UX Designer</option>
+                </select>
+
+                {/* Task Status Summary */}
+                <div className="task-status-section">
+                  <div className="task-management">
+                    <p className="section-title">Assigned Tasks ({newEmployee.tasks.length})</p>
+                    <button onClick={addNewTask} className="add-task-button">
+                      <Plus size={14} />
+                      Add Task
+                    </button>
+                  </div>
+                  <div className="task-list">
+                    {newEmployee.tasks.map((task, idx) => (
+                      <div key={task.id} className="edit-task-item">
+                        <div className="task-info">
+                          <div className={getTaskDotClass(task.status)}></div>
+                          <input
+                            type="text"
+                            value={task.name}
+                            onChange={(e) => updateNewEmployeeTask(idx, 'name', e.target.value)}
+                            className="edit-task-name-input"
+                            placeholder="Task name"
+                          />
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <select
+                            value={task.status}
+                            onChange={(e) => updateNewEmployeeTask(idx, 'status', e.target.value)}
+                            className="edit-task-status-select"
+                          >
+                            <option value="completed">Completed</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="pending">Pending</option>
+                            <option value="delayed">Delayed</option>
+                          </select>
+                          <button 
+                            onClick={() => removeNewTask(idx)} 
+                            className="remove-task-button"
+                            title="Remove Task"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Individual Task Progress Bars */}
+                <div className="task-progress-section">
+                  <p className="section-title">Task Progress</p>
+                  {newEmployee.tasks.map((task, idx) => (
+                    <div key={task.id} className="task-progress-item">
+                      <div className="task-progress-header">
+                        <span className="task-progress-name">{task.name}</span>
+                        <span className="task-progress-percent">
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={task.progress}
+                            onChange={(e) => updateNewEmployeeTask(idx, 'progress', parseInt(e.target.value) || 0)}
+                            className="edit-progress-input"
+                          />
+                        </span>
+                      </div>
+                      <div className="task-progress-bar-bg">
+                        <div 
+                          className={getProgressBarClass(task.status)}
+                          style={{width: `${task.progress}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Overall Progress */}
+                <div className="overall-progress-section">
+                  <div className="overall-progress-header">
+                    <span className="overall-progress-label">Overall Progress</span>
+                    <span className="overall-progress-value">
+                      {newEmployee.tasks.filter(t => t.status === 'completed').length} / {newEmployee.tasks.length}
+                    </span>
+                  </div>
+                  
+                  <div className="overall-progress-bar-bg">
+                    <div className="overall-progress-bar" style={{width: `${newEmployeeProgress}%`}}></div>
+                  </div>
+                  
+                  <p className="overall-progress-percent">{newEmployeeProgress}% Complete</p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="action-buttons">
+                  <button onClick={handleSaveNewEmployee} className="save-button">
+                    <Save size={18} />
+                    Add Employee
+                  </button>
+                  <button onClick={handleCancelNewEmployee} className="cancel-button">
+                    <X size={18} />
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Existing Employee Cards */}
           {filteredEmployees.map((employee) => {
-            const progress = Math.round((employee.tasksCompleted / employee.totalTasks) * 100);
+            const isEditing = editingId === employee.id;
+            const displayEmployee = isEditing ? editedEmployee : employee;
+            const progress = Math.round((displayEmployee.tasksCompleted / displayEmployee.totalTasks) * 100);
             
             return (
-              <div key={employee.id} className="employee-card">
+              <div key={employee.id} className={`employee-card ${isEditing ? 'editing' : ''}`}>
                 {/* Card Header */}
                 <div className="card-header">
-                  <span className={`status-badge ${employee.status === 'Active' ? 'status-active' : 'status-busy'}`}>
-                    {employee.status}
-                  </span>
+                  {isEditing ? (
+                    <select 
+                      value={displayEmployee.status}
+                      onChange={(e) => updateEmployeeField('status', e.target.value)}
+                      className="edit-status-select"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Busy">Busy</option>
+                    </select>
+                  ) : (
+                    <span className={`status-badge ${employee.status === 'Active' ? 'status-active' : 'status-busy'}`}>
+                      {employee.status}
+                    </span>
+                  )}
+                  
+                  {/* Delete Button - Only show when not editing */}
+                  {!isEditing && (
+                    <button 
+                      onClick={() => handleDeleteEmployee(employee.id)}
+                      className="delete-employee-button"
+                      title="Delete Employee"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                   
                   <div className="employee-photo-wrapper">
                     <div className="photo-glow"></div>
-                    <img src={employee.photo} alt={employee.name} className="employee-photo" />
+                    <img src={displayEmployee.photo} alt={displayEmployee.name} className="employee-photo" />
+                    
+                    {isEditing && (
+                      <div className="photo-upload-overlay">
+                        <button 
+                          type="button"
+                          onClick={triggerFileInput}
+                          className="upload-photo-button"
+                        >
+                          <Upload size={20} />
+                          Change Photo
+                        </button>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleImageUpload}
+                          accept="image/*"
+                          className="photo-file-input"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Card Body */}
                 <div className="card-body">
-                  <h2 className="employee-name">{employee.name}</h2>
-                  <p className="employee-department">{employee.department}</p>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={displayEmployee.name}
+                      onChange={(e) => updateEmployeeField('name', e.target.value)}
+                      className="edit-name-input"
+                    />
+                  ) : (
+                    <h2 className="employee-name">{displayEmployee.name}</h2>
+                  )}
+                  
+                  {isEditing ? (
+                    <select
+                      value={displayEmployee.department}
+                      onChange={(e) => updateEmployeeField('department', e.target.value)}
+                      className="edit-department-select"
+                    >
+                      <option value="Frontend Developer">Frontend Developer</option>
+                      <option value="Backend Developer">Backend Developer</option>
+                      <option value="UI/UX Designer">UI/UX Designer</option>
+                    </select>
+                  ) : (
+                    <p className="employee-department">{displayEmployee.department}</p>
+                  )}
 
                   {/* Task Status Summary */}
                   <div className="task-status-section">
-                    <p className="section-title">Assigned Tasks ({employee.totalTasks})</p>
+                    <div className="task-management">
+                      <p className="section-title">Assigned Tasks ({displayEmployee.totalTasks})</p>
+                      {isEditing && (
+                        <button onClick={addTask} className="add-task-button">
+                          <Plus size={14} />
+                          Add Task
+                        </button>
+                      )}
+                    </div>
                     <div className="task-list">
-                      {employee.tasks.map((task, idx) => (
-                        <div key={idx} className="task-item">
+                      {displayEmployee.tasks.map((task, idx) => (
+                        <div key={task.id} className={isEditing ? "edit-task-item" : "task-item"}>
                           <div className="task-info">
                             <div className={getTaskDotClass(task.status)}></div>
-                            <span className="task-name">{task.name}</span>
+                            {isEditing ? (
+                              <input
+                                type="text"
+                                value={task.name}
+                                onChange={(e) => updateTask(idx, 'name', e.target.value)}
+                                className="edit-task-name-input"
+                              />
+                            ) : (
+                              <span className="task-name">{task.name}</span>
+                            )}
                           </div>
-                          {getStatusBadge(task.status)}
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            {isEditing ? (
+                              <>
+                                <select
+                                  value={task.status}
+                                  onChange={(e) => updateTask(idx, 'status', e.target.value)}
+                                  className="edit-task-status-select"
+                                >
+                                  <option value="completed">Completed</option>
+                                  <option value="in-progress">In Progress</option>
+                                  <option value="pending">Pending</option>
+                                  <option value="delayed">Delayed</option>
+                                </select>
+                                <button 
+                                  onClick={() => removeTask(idx)} 
+                                  className="remove-task-button"
+                                  title="Remove Task"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </>
+                            ) : (
+                              getStatusBadge(task.status)
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -325,11 +755,24 @@ function User() {
                   {/* Individual Task Progress Bars */}
                   <div className="task-progress-section">
                     <p className="section-title">Task Progress</p>
-                    {employee.tasks.map((task, idx) => (
-                      <div key={idx} className="task-progress-item">
+                    {displayEmployee.tasks.map((task, idx) => (
+                      <div key={task.id} className="task-progress-item">
                         <div className="task-progress-header">
                           <span className="task-progress-name">{task.name}</span>
-                          <span className="task-progress-percent">{task.progress}%</span>
+                          <span className="task-progress-percent">
+                            {isEditing ? (
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={task.progress}
+                                onChange={(e) => updateTask(idx, 'progress', parseInt(e.target.value) || 0)}
+                                className="edit-progress-input"
+                              />
+                            ) : (
+                              `${task.progress}%`
+                            )}
+                          </span>
                         </div>
                         <div className="task-progress-bar-bg">
                           <div 
@@ -346,7 +789,7 @@ function User() {
                     <div className="overall-progress-header">
                       <span className="overall-progress-label">Overall Progress</span>
                       <span className="overall-progress-value">
-                        {employee.tasksCompleted} / {employee.totalTasks}
+                        {displayEmployee.tasksCompleted} / {displayEmployee.totalTasks}
                       </span>
                     </div>
                     
@@ -357,9 +800,24 @@ function User() {
                     <p className="overall-progress-percent">{progress}% Complete</p>
                   </div>
 
-                  <button className="view-details-button">
-                    View Full Details →
-                  </button>
+                  {/* Action Buttons */}
+                  {isEditing ? (
+                    <div className="action-buttons">
+                      <button onClick={handleSave} className="save-button">
+                        <Save size={18} />
+                        Save
+                      </button>
+                      <button onClick={handleCancel} className="cancel-button">
+                        <X size={18} />
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => handleEdit(employee)} className="edit-button">
+                      <Edit2 size={18} />
+                      Edit Employee
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -367,10 +825,10 @@ function User() {
         </div>
 
         {/* No Results Message */}
-        {filteredEmployees.length === 0 && (
+        {filteredEmployees.length === 0 && !showAddEmployee && (
           <div className="no-results">
             <div className="no-results-icon">🔍</div>
-            <p className="no-results-text">No employees found matching your criteria.</p>
+            <p className="no-results-text">No employees found.</p>
           </div>
         )}
       </main>
