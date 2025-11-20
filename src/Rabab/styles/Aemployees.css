@@ -1,0 +1,124 @@
+.adminEmployees-page .card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  overflow-x: auto;
+}
+
+.adminEmployees-page .container{
+    padding: 20px 150px;
+}
+
+.adminEmployees-page .table-header
+ {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.adminEmployees-page .create-btn {
+  padding: 6px 12px;
+  background-color: var(--color-gold);
+  color: var(--color-darkBlue);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.adminEmployees-page .create-btn:hover {
+  opacity: 0.85;
+}
+
+.adminEmployees-page .admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.adminEmployees-page .admin-table th,
+.adminEmployees-page .admin-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.adminEmployees-page .admin-table th {
+  background-color: var(--color-darkBlue);
+  color: #fff;
+  font-weight: bold;
+}
+
+.adminEmployees-page .admin-table tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.adminEmployees-page .admin-table img {
+  display: block;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.adminEmployees-page .update-btn {
+  padding: 6px 12px;
+  margin-right: 5px;
+  background-color: var(--color-gold);
+  color: var(--color-darkBlue);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.adminEmployees-page .delete-btn {
+  padding: 6px 12px;
+  background-color: #f34c52;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.adminEmployees-page .breadcrumb {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: var(--color-darkBlue);
+}
+
+.adminEmployees-page .create-form {
+  background-color: #f4f6f8;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.adminEmployees-page .create-form input {
+  padding: 8px 10px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.adminEmployees-page .save-btn {
+  padding: 6px 12px;
+  background-color: var(--color-gold);
+  color: var(--color-darkBlue);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.adminEmployees-page .save-btn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 1120px) {
+  .adminEmployees-page .container{
+    padding: 20px 50px;
+  }
+}

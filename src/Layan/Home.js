@@ -1,16 +1,63 @@
 import { useState, useEffect } from 'react';
 import { Users, CheckCircle, TrendingUp, FolderOpen } from 'lucide-react';
 import './Home.css';
+import Login from "../Layan/Login";
+import { useNavigate } from "react-router-dom";
 
-function Home({ onNavigateToUsers }) {
-  const [animationComplete, setAnimationComplete] = useState(false);
+function Home() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [animationComplete, setAnimationComplete] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentPage('login');
+    navigate('/');
+  };
 
   useEffect(() => {
     setTimeout(() => setAnimationComplete(true), 100);
   }, []);
 
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    navigate('home');
+  };
+  
+  // Show login page if not logged in
+  if (!isLoggedIn) {
+    return <Login/>;
+  }
+
   return (
-    <div className="home-container">
+   <div className="App">
+      <nav className="navbar">
+        <div className="navbar-container">
+          <h1 className="navbar-brand">TechnoSoft</h1>
+          <div className="nav-buttons">
+            <button
+              onClick={() => setCurrentPage('home')}
+              className={currentPage === 'home' ? 'nav-button active' : 'nav-button'}
+            >
+              Home
+            </button>
+            <button
+              onClick={() => navigate('/employees')}
+              className={currentPage === 'employees' ? 'nav-button active' : 'nav-button'}
+            >
+              Employees
+            </button>
+            <button
+              onClick={handleLogout}
+              className="nav-button logout"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </nav>
+       <div className="home-container">
       <div className="home-content">
         
         {/* Animated Logo - Updated to use Image */}
@@ -100,7 +147,7 @@ function Home({ onNavigateToUsers }) {
 
           {/* CTA Button */}
           <div className={`cta-container ${animationComplete ? 'animate-in' : 'animate-out'}`}>
-            <button className="cta-button" onClick={onNavigateToUsers}>
+            <button className="cta-button" onClick={() => navigate("/employees")}>
               View Team Dashboard →
             </button>
           </div>
@@ -108,6 +155,7 @@ function Home({ onNavigateToUsers }) {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import './Login.css';
+import { useNavigate } from "react-router-dom";
 
-function Login({ onLogin }) {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     setError('');
@@ -29,9 +31,13 @@ function Login({ onLogin }) {
     // Simulate login delay
     setTimeout(() => {
       // Demo credentials (remove in production)
-      if (email === 'admin@teknosoft.com' && password === 'admin123') {
-        onLogin();
-      } else {
+      if (email === 'admin@teknosoft.com' && password === 'admin123') { {/*here to check if he is admin , and navigate to admin pages */}
+         navigate('/admin');
+      } 
+      else if(email && password){      {/*here to check the user from Database, and navigate to user pages * */}
+         navigate('/home');
+      }
+      else {
         setError('Invalid email or password');
         setIsLoading(false);
       }

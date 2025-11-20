@@ -1,14 +1,19 @@
 import { useState, useRef } from 'react';
 import { Search, Filter, Users, CheckCircle, Clock, AlertCircle, Edit2, Save, X, Plus, Trash2, Upload } from 'lucide-react';
 import './User.css';
+import Login from "../Layan/Login";
+import { useNavigate } from "react-router-dom";
 
 function User() {
+  const [currentPage, setCurrentPage] = useState('employees');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDepartment, setFilterDepartment] = useState('All');
   const [sortBy, setSortBy] = useState('name');
   const [editingId, setEditingId] = useState(null);
   const [editedEmployee, setEditedEmployee] = useState(null);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
   const [newEmployee, setNewEmployee] = useState({
     name: "",
     photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
@@ -20,12 +25,31 @@ function User() {
     tasksCompleted: 0,
     totalTasks: 1
   });
+
+   const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentPage('login');
+    navigate('/');
+  };
+
+   const handleLogin = () => {
+    setIsLoggedIn(true);
+    navigate('home');
+  };
+ 
   const fileInputRef = useRef(null);
   const newEmployeeFileInputRef = useRef(null);
 
   const [employees, setEmployees] = useState([
   ]);
 
+ const navigate = useNavigate();
+  
+  // Show login page if not logged in
+  if (!isLoggedIn) {
+     return <Login />;
+  }
+  
   // Delete employee handler
   const handleDeleteEmployee = (employeeId) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
@@ -312,6 +336,32 @@ function User() {
   const newEmployeeProgress = Math.round((newEmployee.tasks.filter(t => t.status === 'completed').length / newEmployee.tasks.length) * 100);
 
   return (
+     <div className="App">
+      <nav className="navbar">
+        <div className="navbar-container">
+          <h1 className="navbar-brand">TechnoSoft</h1>
+          <div className="nav-buttons">
+            <button
+              onClick={() => navigate('/home')}
+              className={currentPage === 'home' ? 'nav-button active' : 'nav-button'}
+            >
+              Home
+            </button>
+            <button
+              onClick={() => setCurrentPage('employees')}
+              className={currentPage === 'employees' ? 'nav-button active' : 'nav-button'}
+            >
+              Employees
+            </button>
+            <button
+              onClick={handleLogout}
+              className="nav-button logout"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </nav>
     <div className="user-page">
       {/* Header */}
       <header className="user-header">
@@ -839,6 +889,7 @@ function User() {
           <p className="footer-text">© 2025 TechnoSoft Team Management System - All Rights Reserved</p>
         </div>
       </footer>
+    </div>
     </div>
   );
 }

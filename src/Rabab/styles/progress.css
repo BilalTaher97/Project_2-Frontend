@@ -1,0 +1,147 @@
+
+/* Default columns (mobile first) */
+.col-1 { flex: 0 0 8.33%; max-width: 8.33%; }
+.col-2 { flex: 0 0 16.66%; max-width: 16.66%; }
+.col-3 { flex: 0 0 25%; max-width: 25%; }
+.col-4 { flex: 0 0 33.33%; max-width: 33.33%; }
+.col-5 { flex: 0 0 41.66%; max-width: 41.66%; }
+.col-6 { flex: 0 0 50%; max-width: 50%; }
+.col-7 { flex: 0 0 58.33%; max-width: 58.33%; }
+.col-8 { flex: 0 0 66.66%; max-width: 66.66%; }
+.col-9 { flex: 0 0 75%; max-width: 75%; }
+.col-10 { flex: 0 0 83.33%; max-width: 83.33%; }
+.col-11 { flex: 0 0 91.66%; max-width: 91.66%; }
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+
+/* Medium screens ≥768px */
+@media (min-width: 768px) {
+  .col-md-1 { flex: 0 0 8.33%; max-width: 8.33%; }
+  .col-md-2 { flex: 0 0 16.66%; max-width: 16.66%; }
+  .col-md-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-md-4 { flex: 0 0 33.33%; max-width: 33.33%; }
+  .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* Large screens ≥992px */
+@media (min-width: 992px) {
+  .col-lg-1 { flex: 0 0 8.33%; max-width: 8.33%; }
+  .col-lg-2 { flex: 0 0 16.66%; max-width: 16.66%; }
+  .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-lg-4 { flex: 0 0 33.33%; max-width: 33.33%; }
+  .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+.adminProgress-page .card{
+    background:white;
+  padding: 15px;
+  position: relative;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgb(0, 0, 0,0.4);
+}
+
+.adminProgress-page .overview-container{
+    margin: 30px auto;
+    border-radius: 15px;
+}
+
+.adminProgress-page h2{
+    text-transform: capitalize;
+    margin: 10px;
+}
+.adminProgress-page .grid{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    padding:0 10px;
+    margin: 20px 25px;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    align-items: center;
+}
+.adminProgress-page .grid .cell{
+    text-transform: capitalize;
+    padding: 20px 0 10px 10px;
+}
+.adminProgress-page .grid p {
+    font-size: 15px;
+    font-weight: 500;
+    color:#667085;
+}
+.adminProgress-page .grid h3{
+    font-size: 25px;
+}
+.adminProgress-page .grid .cell:not(.cell:first-child){
+    border-left: 1px solid #e3e3e3;
+}
+.adminProgress-page .row{
+   display: flex;
+    margin: 30px auto;
+    gap: 6px;
+}
+.adminProgress-page .admin-table tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.adminProgress-page .admin-table th {
+  background-color: var(--color-darkBlue);
+  color: #fff;
+  font-weight: bold;
+}
+.adminProgress-page.admin-table th,
+.adminProgress-page .admin-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  text-transform: capitalize;
+}
+.adminProgress-page .admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.adminProgress-page .table-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.adminProgress-page .row .card:last-of-type{
+    overflow: scroll;
+    height: 350px;
+}
+.adminProgress-page .row h3{
+    padding-bottom: 20px;
+}
+.ribbon {
+  --h: var(60px);
+  position: absolute;
+  top: 12px;           
+  left: -25px;          
+  height: var(--h);
+  padding: 0 18px;
+  line-height: var(--h);
+  color: var(--color-darkBlue);
+  background: var(--color-gold);
+  font-weight: 600;
+  transform: rotate(-30deg);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  border-radius: 8px;
+  white-space: nowrap;
+  z-index: 10;
+  display: inline-block;
+  text-align: center;
+  font-size: 15px;
+}
+.status-gold {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.status-green {
+  color: green;
+  font-weight: 700;
+}
+
+.status-red {
+  color: red;
+  font-weight: 700;
+}

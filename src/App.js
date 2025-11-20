@@ -1,3 +1,9 @@
+import AdminDashoard from "./Rabab/pages/AdminDashboard";
+import Admin from "./Rabab/Admin";
+import AdminEmployee from "./Rabab/pages/AdminEmployee";
+import AdminProgress from "./Rabab/pages/AdminProgress";
+import AdminTaskManger from "./Rabab/pages/AdminTaskManager.js";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { useState, useEffect } from 'react';
 import Home from './Layan/Home';
 import User from './Layan/User';
@@ -6,68 +12,31 @@ import Login from './Layan/Login';
 import './App.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 1500);
   }, []);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setCurrentPage('home');
-  };
 
   // Show loading screen
   if (isLoading) {
     return <Loading />;
   }
 
-  // Show login page if not logged in
-  if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
-  }
-
-  // Show main app after login
   return (
-    <div className="App">
-      <nav className="navbar">
-        <div className="navbar-container">
-          <h1 className="navbar-brand">TechnoSoft</h1>
-          <div className="nav-buttons">
-            <button
-              onClick={() => setCurrentPage('home')}
-              className={currentPage === 'home' ? 'nav-button active' : 'nav-button'}
-            >
-              Home
-            </button>
-            <button
-              onClick={() => setCurrentPage('employees')}
-              className={currentPage === 'employees' ? 'nav-button active' : 'nav-button'}
-            >
-              Employees
-            </button>
-            <button
-              onClick={handleLogout}
-              className="nav-button logout"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Router>
+       <Routes> 
+         <Route path="/" element={<Login />}/>
+         <Route path="/home" element={<Home />} /> 
+         <Route path="/employees" element={<User />} />
+         <Route path="/adminDashoard" element={<AdminDashoard />} />
+         <Route path="/Admin" element={<Admin />} />
+         <Route path="/AdminEmployees" element={<AdminEmployee />} />
+         <Route path="/AdminProgress" element={<AdminProgress />} />
+         <Route path="/AdminTaskManger" element={<AdminTaskManger />} />
+      </Routes>
+    </Router>
 
-      {/* Page Content */}
-      <div className="pt-16">
-        {currentPage === 'home' && <Home onNavigateToUsers={() => setCurrentPage('employees')} />}
-        {currentPage === 'employees' && <User />}
-      </div>
-    </div>
   );
 }
 

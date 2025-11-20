@@ -1,0 +1,204 @@
+
+/* Default columns (mobile first) */
+.col-1 { flex: 0 0 8.33%; max-width: 8.33%; }
+.col-2 { flex: 0 0 16.66%; max-width: 16.66%; }
+.col-3 { flex: 0 0 25%; max-width: 25%; }
+.col-4 { flex: 0 0 33.33%; max-width: 33.33%; }
+.col-5 { flex: 0 0 41.66%; max-width: 41.66%; }
+.col-6 { flex: 0 0 50%; max-width: 50%; }
+.col-7 { flex: 0 0 58.33%; max-width: 58.33%; }
+.col-8 { flex: 0 0 66.66%; max-width: 66.66%; }
+.col-9 { flex: 0 0 75%; max-width: 75%; }
+.col-10 { flex: 0 0 83.33%; max-width: 83.33%; }
+.col-11 { flex: 0 0 91.66%; max-width: 91.66%; }
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+
+/* Medium screens ≥768px */
+@media (min-width: 768px) {
+  .col-md-1 { flex: 0 0 8.33%; max-width: 8.33%; }
+  .col-md-2 { flex: 0 0 16.66%; max-width: 16.66%; }
+  .col-md-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-md-4 { flex: 0 0 33.33%; max-width: 33.33%; }
+  .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* Large screens ≥992px */
+@media (min-width: 992px) {
+  .col-lg-1 { flex: 0 0 8.33%; max-width: 8.33%; }
+  .col-lg-2 { flex: 0 0 16.66%; max-width: 16.66%; }
+  .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-lg-4 { flex: 0 0 33.33%; max-width: 33.33%; }
+  .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-lg-10 { flex: 0 0 75%; max-width: 75%; }
+  .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+.adminTaskManager-page .container{
+    margin: 30px auto;
+}
+
+.adminTaskManager-page .table-header
+ {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-gold);
+}
+
+.adminTaskManager-page .create-btn:hover {
+  opacity: 0.85;
+}
+
+.adminTaskManager-page .create-btn {
+  padding: 6px 12px;
+  background-color: var(--color-gold);
+  color: var(--color-darkBlue);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.adminTaskManager-page .card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  overflow-x: auto;
+}
+
+.adminTaskManager-page .grid{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 5px;
+}
+.adminTaskManager-page .items{
+    text-transform: capitalize;
+    margin-left: 20px;
+}
+.adminTaskManager-page .items h3{
+    margin-bottom: 15px;
+}
+.adminTaskManager-page .items .item{
+    width: 100% !important;
+    margin-bottom: 20px;
+}
+.adminTaskManager-page .items .row{
+    display: flex;
+    justify-content: space-between;
+}
+.adminTaskManager-page .items p{
+    color: #3e526d;
+    margin-bottom: 20px;
+}
+.adminTaskManager-page .items .row img{
+    width: 40px;    
+    height: 40px;
+    border-radius: 50%;
+}
+.adminTaskManager-page .item .deadline{
+    color: #83868c;
+}
+.adminTaskManager-page .item .name{
+    padding: 5px 10px;
+    width: fit-content;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: 700;
+}
+.adminTaskManager-page .items.in-progress-task .item .name{
+     background-color: rgb(229, 232, 155);
+    color: rgb(111, 114, 22);
+}
+.adminTaskManager-page .items.late .item .name{
+    background-color: rgb(232, 155, 155);
+    color: rgb(114, 22, 22);
+}
+.adminTaskManager-page .items.completed .item .name{
+    background-color: rgb(155, 232, 155);
+    color: rgb(22, 114, 22);
+}
+.adminTaskManager-page .item .actions {
+  display: flex;
+  justify-content: end;
+  margin-top: 10px;
+}
+
+.adminTaskManager-page  .edit-btn {
+  background: transparent;
+  padding: 5px 7px;
+  border-radius: 5px;
+  color: #3796ac;
+  border: none;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.adminTaskManager-page  .delete-btn {
+  color: #dc2626;
+  padding: 5px 7px;
+  border-radius: 5px;
+  border: none;
+  background-color: transparent;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.adminTaskManager-page  .edit-btn:hover {
+  opacity: 0.9;
+}
+
+.adminTaskManager-page  .delete-btn:hover {
+  opacity: 0.9;
+}
+.adminTaskManager-page  .task-form {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adminTaskManager-page  .task-form input,
+.adminTaskManager-page  .task-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.adminTaskManager-page  .form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.adminTaskManager-page  .save-btn {
+  background: var(--color-gold);
+  padding: 10px 15px;
+  color: white;
+  border-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.adminTaskManager-page  .cancel-btn {
+  background: #9ca3af;
+  padding: 10px 15px;
+  color: white;
+  border-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+@media (max-width:992px) {
+   .adminTaskManager-page .grid{
+        grid-template-columns: repeat(2,1fr);
+   }
+}
