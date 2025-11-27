@@ -1,139 +1,156 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/header";
 import "../styles/progress.css";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
-  ArcElement,
   Tooltip,
   Legend,
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
-
-
-const barData = {
-  labels: ["Task 1", "Task 2", "Task 3", "Task 4"],
-  datasets: [
-    {
-      label: "Progress (%)",
-      data: [80, 50, 70, 90],
-      backgroundColor: "#FACC15",
-      borderRadius: 4, // rounded edges
-      barPercentage: 0.4, // width of each bar (0-1)
-      categoryPercentage: 0.8, // spacing between bars (0-1)
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      display: false,
-    },
-  },
-  scales: {
-    x: {
-      grid: { display: false },
-    },
-    y: {
-      beginAtZero: true,
-      max: 100,
-    },
-  },
-};
-
-const getStatusClass = (status) => {
-  const s = status.toLowerCase();
-
-  if (s === "in progress") return "status-gold";
-  if (s === "completed") return "status-green";
-  if (s === "pending" || s === "late") return "status-red";
-
-  return "";
-};
-
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 export default function AdminEmployee() {
+  const [overview, setOverview] = useState({
+    totalEmployees: 0,
+    totalTasks: 0,
+    taskStatistics: { completed: 0, in_progress: 0, overdue: 0 },
+  });
 
-    const [tasks, setTasks] = useState([
-    {  id:1,name: "John Doe", task: "Developing frontend of the technosoft website", deadline: "12/5/2026",status:"in progress"},
-    {  id:2, name: "John Doe", task: "Developing frontend of the technosoft website", deadline: "12/5/2026",status:"late"},
-    {  id:3, name: "John Doe", task: "Developing frontend of the technosoft website", deadline: "12/5/2026",status:"completed"},
-    {  id:4, name: "John Doe", task: "Developing frontend of the technosoft website", deadline: "12/5/2026",status:"in progress"},
-    {  id:5, name: "John Doe", task: "Developing frontend of the technosoft website", deadline: "12/5/2026",status:"in progress"},
-  ]);
+  const [progressData, setProgressData] = useState([]);
+  const token = localStorage.getItem("token");
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const yyyy = date.getFullYear();
+    let mm = date.getMonth() + 1;
+    let dd = date.getDate();
+    if (mm < 10) mm = "0" + mm;
+    if (dd < 10) dd = "0" + dd;
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const formatTaskName = (name, maxLength = 20) => {
+    if (name.length <= maxLength) return name;
+    return name.slice(0, maxLength) + "...";
+  };
 
   useEffect(() => {
     document.body.classList.add("adminProgress-page");
+
+    const fetchOverview = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/admin/dashboard", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch overview");
+        const data = await res.json();
+        setOverview(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const fetchProgress = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/admin/progress", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch progress data");
+        const data = await res.json();
+        setProgressData(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchOverview();
+    fetchProgress();
+
     return () => document.body.classList.remove("adminProgress-page");
-  }, []);
+  }, [token]);
+
+  const barData = {
+    labels: progressData.map((task) => formatTaskName(task.task_name)),
+    datasets: [
+      {
+        label: "Progress (%)",
+        data: progressData.map((task) => task.progress_percentage),
+        backgroundColor: "#FACC15",
+        borderRadius: 4,
+        barPercentage: 0.4,
+        categoryPercentage: 0.8,
+      },
+    ],
+  };
+
+  const barOptions = {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, max: 100 },
+    },
+  };
 
   return (
     <div>
-        <Header />
-        <div className="col-9 overview-container card">
-       <div className="ribbon">Overview</div>
-           <div className="grid">
-             <div className="col-4 cell">
-                <p>
-                    Total Tasks
-                </p>
-                <h3>150</h3>
-             </div>
-             <div className="col-4 cell">
-                <p>
-                    completed
-                </p>
-                <h3>21</h3>
-             </div>
-             <div className="col-4 cell">
-                <p>
-                    in progress
-                </p>
-                <h3>2</h3>
-             </div>
-             <div className="col-4 cell">
-                <p>
-                    late
-                </p>
-                <h3>20</h3>
-             </div>
-           </div>
+      <Header />
+      <div className="col-9 overview-container card">
+        <div className="ribbon">Overview</div>
+        <div className="grid">
+          <div className="col-4 cell">
+            <p>Total Tasks</p>
+            <h3>{overview.totalTasks}</h3>
+          </div>
+          <div className="col-4 cell">
+            <p>Completed</p>
+            <h3>{overview.taskStatistics.completed}</h3>
+          </div>
+          <div className="col-4 cell">
+            <p>In Progress</p>
+            <h3>{overview.taskStatistics.in_progress}</h3>
+          </div>
+          <div className="col-4 cell">
+            <p>Overdue</p>
+            <h3>{overview.taskStatistics.overdue}</h3>
+          </div>
         </div>
-        <div className="row col-9">
-            <div className="col-5 card">
-      <h3>Progress Bar Chart</h3>
-      <Bar data={barData} options={options}/>
-    </div>
-    <div className="col-7 card">
-      <h3>Progress Details</h3>
+      </div>
+
+      <div className="row col-9">
+        <div className="col-12 card">
+          <h3>Progress Bar Chart</h3>
+          <Bar data={barData} options={barOptions} />
+        </div>
+
+        <div className="col-12 card">
+          <h3>Progress Details</h3>
           <table className="admin-table">
             <thead>
               <tr>
                 <th>Employee</th>
                 <th>Task</th>
-                <th>Deadline</th>
-                <th>Status</th>
+                <th>Updated At</th>
+                <th>Progress (%)</th>
               </tr>
             </thead>
             <tbody>
-              {tasks.map((task) => (
-                <tr key={task.id}>
-                  <td>{task.name}</td>
-                  <td>{task.task}</td>
-                  <td>{task.deadline}</td>
-                  <td className={getStatusClass(task.status)}>{task.status}</td>
+              {progressData.map((task, index) => (
+                <tr key={index}>
+                  <td>{task.employee}</td>
+                  <td>{task.task_name}</td>
+                  <td>{formatDate(task.updated_at)}</td>
+                  <td>{task.progress_percentage}%</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-    </div>
+      </div>
     </div>
   );
 }

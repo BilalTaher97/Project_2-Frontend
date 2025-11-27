@@ -93,7 +93,7 @@
 }
 .adminTaskManager-page .items p{
     color: #3e526d;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 .adminTaskManager-page .items .row img{
     width: 40px;    
@@ -111,15 +111,15 @@
     margin-top: 10px;
     font-weight: 700;
 }
-.adminTaskManager-page .items.in-progress-task .item .name{
+.adminTaskManager-page .items .item.in_progress .name{
      background-color: rgb(229, 232, 155);
     color: rgb(111, 114, 22);
 }
-.adminTaskManager-page .items.late .item .name{
+.adminTaskManager-page .items .item.pending .name{
     background-color: rgb(232, 155, 155);
     color: rgb(114, 22, 22);
 }
-.adminTaskManager-page .items.completed .item .name{
+.adminTaskManager-page .items .item.completed .name{
     background-color: rgb(155, 232, 155);
     color: rgb(22, 114, 22);
 }
