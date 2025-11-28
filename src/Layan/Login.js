@@ -1,3 +1,4 @@
+import { saveAuthToken, saveUserInfo, login } from './api';
 import { useState } from 'react';
 import './Login.css';
 import { useNavigate } from "react-router-dom";
@@ -11,11 +12,11 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError('');
     setIsLoading(true);
 
-    // Simple validation
+    // Basic validation
     if (!email || !password) {
       setError('Please fill in all fields');
       setIsLoading(false);
@@ -28,20 +29,32 @@ function Login() {
       return;
     }
 
-    // Simulate login delay
-    setTimeout(() => {
-      // Demo credentials (remove in production)
-      if (email === 'admin@teknosoft.com' && password === 'admin123') { {/*here to check if he is admin , and navigate to admin pages */}
-         navigate('/admin');
-      } 
-      else if(email && password){      {/*here to check the user from Database, and navigate to user pages * */}
-         navigate('/home');
+    try {
+      // Call the login API
+      const response = await login(email, password);
+      
+      // Check if login was successful
+      if (response.success && response.token) {
+        // Save the token using the API helper function
+        saveAuthToken(response.token, rememberMe);
+        
+        // Save user info if available
+        if (response.user) {
+          saveUserInfo(response.user, rememberMe);
+        }
+        
+        // Navigate to home page
+        navigate('/home');
+      } else {
+        setError('Login failed. Please check your credentials.');
       }
-      else {
-        setError('Invalid email or password');
-        setIsLoading(false);
-      }
-    }, 1500);
+    } catch (err) {
+      // Handle login errors
+      setError(err.message || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -183,15 +196,10 @@ function Login() {
             </button>
           </div>
 
-          {/* Demo Credentials Info */}
-          <div className="demo-info">
-            <p className="demo-title">🎯 Demo Credentials:</p>
-            <p className="demo-text">Email: <strong>admin@teknosoft.com</strong></p>
-            <p className="demo-text">Password: <strong>admin123</strong></p>
-          </div>
         </div>
       </div>
     </div>
+    
   );
 }
 

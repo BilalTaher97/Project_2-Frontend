@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, Filter, Users, CheckCircle, Clock, AlertCircle, Edit2, Save, X, Plus, Trash2, Upload } from 'lucide-react';
 import './User.css';
 import Login from "../Layan/Login";
 import { useNavigate } from "react-router-dom";
+import { getAllTasks, updateTaskProgress, logout, isAuthenticated, getUserProfile } from './api';
 
 function User() {
   const [currentPage, setCurrentPage] = useState('employees');
@@ -12,7 +13,10 @@ function User() {
   const [editingId, setEditingId] = useState(null);
   const [editedEmployee, setEditedEmployee] = useState(null);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
 
   const [newEmployee, setNewEmployee] = useState({
     name: "",
@@ -26,28 +30,108 @@ function User() {
     totalTasks: 1
   });
 
-   const handleLogout = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const newEmployeeFileInputRef = useRef(null);
+
+  // Check authentication and fetch data on mount
+  useEffect(() => {
+    const initializePage = async () => {
+      if (isAuthenticated()) {
+        setIsLoggedIn(true);
+        await fetchUserData();
+      } else {
+        setIsLoggedIn(false);
+        setLoading(false);
+      }
+    };
+
+    initializePage();
+  }, []);
+
+  // Fetch user tasks and profile from API
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch tasks
+      const tasksResponse = await getAllTasks();
+      if (tasksResponse.success) {
+        setTasks(tasksResponse.tasks);
+      }
+
+      // Fetch user profile
+      try {
+        const profileResponse = await getUserProfile();
+        if (profileResponse.success) {
+          setUserProfile(profileResponse.profile);
+        }
+      } catch (err) {
+        console.log('Profile fetch failed:', err);
+      }
+
+    } catch (err) {
+      console.error('Error fetching user data:', err);
+      // If unauthorized, redirect to login
+      if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        handleLogout();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle task progress update
+  const handleTaskProgressUpdate = async (taskId, newProgress) => {
+    try {
+      await updateTaskProgress(taskId, newProgress);
+      
+      // Refresh tasks after update
+      await fetchUserData();
+      
+      alert('Progress updated successfully!');
+    } catch (err) {
+      console.error('Error updating progress:', err);
+      alert('Failed to update progress: ' + err.message);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
     setIsLoggedIn(false);
     setCurrentPage('login');
     navigate('/');
   };
 
-   const handleLogin = () => {
+  const handleLogin = () => {
     setIsLoggedIn(true);
     navigate('home');
   };
- 
-  const fileInputRef = useRef(null);
-  const newEmployeeFileInputRef = useRef(null);
 
-  const [employees, setEmployees] = useState([
-  ]);
-
- const navigate = useNavigate();
+  // Mock employees state (you can replace this with API data if you have an employees endpoint)
+  const [employees, setEmployees] = useState([]);
   
   // Show login page if not logged in
   if (!isLoggedIn) {
      return <Login />;
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="App">
+        <nav className="navbar">
+          <div className="navbar-container">
+            <h1 className="navbar-brand">TechnoSoft</h1>
+          </div>
+        </nav>
+        <div className="user-page">
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <h2>Loading...</h2>
+          </div>
+        </div>
+      </div>
+    );
   }
   
   // Delete employee handler
@@ -88,7 +172,7 @@ function User() {
   const handleSaveNewEmployee = () => {
     const employeeToAdd = {
       ...newEmployee,
-      id: Date.now(), // Generate unique ID
+      id: Date.now(),
       tasksCompleted: newEmployee.tasks.filter(t => t.status === 'completed').length,
       totalTasks: newEmployee.tasks.length
     };
@@ -166,13 +250,11 @@ function User() {
     const updatedTasks = [...editedEmployee.tasks];
     updatedTasks[taskIndex] = {...updatedTasks[taskIndex], [field]: value};
     
-    // Update progress based on status
     if (field === 'status') {
       if (value === 'completed') updatedTasks[taskIndex].progress = 100;
       else if (value === 'pending') updatedTasks[taskIndex].progress = 0;
     }
     
-    // Recalculate tasksCompleted and totalTasks
     const completed = updatedTasks.filter(t => t.status === 'completed').length;
     
     setEditedEmployee({
@@ -285,15 +367,14 @@ function User() {
       return 0;
     });
 
-  // Calculate statistics
-  const totalEmployees = employees.length;
-  const totalTasksAll = employees.reduce((sum, emp) => sum + emp.totalTasks, 0);
-  const completedTasksAll = employees.reduce((sum, emp) => sum + emp.tasksCompleted, 0);
-  const inProgressTasks = employees.reduce((sum, emp) => 
-    sum + emp.tasks.filter(t => t.status === 'in-progress').length, 0);
-  const delayedTasks = employees.reduce((sum, emp) => 
-    sum + emp.tasks.filter(t => t.status === 'delayed').length, 0);
-  const overallProgress = Math.round((completedTasksAll / totalTasksAll) * 100);
+// Calculate statistics from API data
+const totalEmployees = employees.length;
+const totalTasksAll = tasks.length;
+const completedTasksAll = tasks.filter(t => t.status === 'completed').length;
+const inProgressTasks = tasks.filter(t => t.status === 'in-progress').length;
+const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+const delayedTasks = tasks.filter(t => t.status === 'delayed').length;  // Add this line
+const overallProgress = totalTasksAll > 0 ? Math.round((completedTasksAll / totalTasksAll) * 100) : 0;
 
   const getStatusBadge = (status) => {
     const badgeClasses = {
