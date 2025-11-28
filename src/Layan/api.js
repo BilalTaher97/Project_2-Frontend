@@ -73,11 +73,11 @@ export const updateTaskProgress = async (taskId, progress) => {
 
 // Save token after login (supports "Remember Me" feature)
 export const saveAuthToken = (token, rememberMe = false) => {
-  if (rememberMe) {
+  // if (rememberMe) {
     localStorage.setItem('authToken', token);
-  } else {
-    sessionStorage.setItem('authToken', token);
-  }
+  // } else {
+  //   sessionStorage.setItem('authToken', token);
+  // }
 };
 
 // Save user info (supports "Remember Me" feature)
