@@ -19,7 +19,7 @@ export default function AdminEmployee() {
   // fetch all employees
   const fetchEmployees = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
 
       const res = await fetch("http://localhost:5000/admin/employees", {
         headers: { "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export default function AdminEmployee() {
   // create employee
   const createEmployee = async (empData) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
 
       const res = await fetch("http://localhost:5000/admin/employees", {
         method: "POST",
@@ -80,7 +80,7 @@ export default function AdminEmployee() {
   // update employee
   const updateEmployee = async (id, empData) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
 
       const res = await fetch(`http://localhost:5000/admin/employees/${id}`, {
         method: "PUT",
@@ -120,7 +120,7 @@ export default function AdminEmployee() {
     if (!confirmDelete) return;
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
 
       const res = await fetch(`http://localhost:5000/admin/employees/${id}`, {
         method: "DELETE",

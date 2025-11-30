@@ -81,11 +81,11 @@ export const updateUserProfile = async (profileData) => {
 
 // Save token after login (supports "Remember Me" feature)
 export const saveAuthToken = (token, rememberMe = false) => {
-  if (rememberMe) {
+  // if (rememberMe) {
     localStorage.setItem('authToken', token);
-  } else {
-    sessionStorage.setItem('authToken', token);
-  }
+  // } else {
+  //   sessionStorage.setItem('authToken', token);
+  // }
 };
 
 // Save user info (supports "Remember Me" feature)
@@ -126,7 +126,7 @@ export const logout = () => {
 
 export const login = async (email, password) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/admin/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export const login = async (email, password) => {
     });
 
     const data = await response.json();
-    
+    console.log(data);
     if (!response.ok) {
       throw new Error(data.message || 'Login failed');
     }

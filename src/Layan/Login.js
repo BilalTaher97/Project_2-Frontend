@@ -32,9 +32,8 @@ function Login() {
     try {
       // Call the login API
       const response = await login(email, password);
-      
       // Check if login was successful
-      if (response.success && response.token) {
+      if (response.message ==='Login successful.' && response.token) {
         // Save the token using the API helper function
         saveAuthToken(response.token, rememberMe);
         
@@ -44,7 +43,12 @@ function Login() {
         }
         
         // Navigate to home page
-        navigate('/home');
+        if(email==='admin@teknosoft.com'){
+          navigate('/admin');
+        }
+        else{
+          navigate('/home');
+        }
       } else {
         setError('Login failed. Please check your credentials.');
       }

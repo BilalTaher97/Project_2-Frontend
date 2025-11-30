@@ -21,7 +21,7 @@ export default function AdminEmployee() {
   });
 
   const [progressData, setProgressData] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);

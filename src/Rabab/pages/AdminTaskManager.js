@@ -11,7 +11,7 @@ export default function AdminTaskManager() {
   });
   const [tasks, setTasks] = useState([]);
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     document.body.classList.add("adminTaskManager-page");
