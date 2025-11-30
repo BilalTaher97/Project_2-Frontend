@@ -10,7 +10,6 @@ function Home() {
   const [animationComplete, setAnimationComplete] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -22,7 +21,6 @@ function Home() {
         await fetchDashboardData();
       } else {
         setIsLoggedIn(false);
-        setLoading(false);
       }
     };
 
@@ -32,7 +30,6 @@ function Home() {
   // Fetch dashboard data from API
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const response = await getDashboard();
       
       if (response.success) {
@@ -45,8 +42,6 @@ function Home() {
       if (err.message.includes('401') || err.message.includes('Unauthorized')) {
         handleLogout();
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -69,26 +64,6 @@ function Home() {
   // Show login page if not logged in
   if (!isLoggedIn) {
     return <Login/>;
-  }
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="App">
-        <nav className="navbar">
-          <div className="navbar-container">
-            <h1 className="navbar-brand">TechnoSoft</h1>
-          </div>
-        </nav>
-        <div className="home-container">
-          <div className="home-content">
-            <div className="welcome-section">
-              <h1 className="welcome-title">Loading...</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   // Calculate statistics from API data or use defaults
@@ -114,7 +89,7 @@ function Home() {
               onClick={() => navigate('/employees')}
               className={currentPage === 'employees' ? 'nav-button active' : 'nav-button'}
             >
-              Employees
+              My Profile
             </button>
             <button
               onClick={handleLogout}
@@ -254,7 +229,7 @@ function Home() {
           {/* CTA Button */}
           <div className={`cta-container ${animationComplete ? 'animate-in' : 'animate-out'}`}>
             <button className="cta-button" onClick={() => navigate("/employees")}>
-              View Team Dashboard →
+              View My Profile →
             </button>
           </div>
 

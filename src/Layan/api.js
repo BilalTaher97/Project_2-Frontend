@@ -1,4 +1,4 @@
-// API connection 
+// API connection (api.js)
 
 const API_BASE_URL = 'http://localhost:5000';
 
@@ -27,7 +27,7 @@ const apiCall = async (endpoint, options = {}) => {
       // Handle unauthorized - token expired or invalid
       if (response.status === 401) {
         logout();
-        window.location.href = '/login';
+        window.location.href = '/';
       }
       throw new Error(data.message || 'Something went wrong');
     }
@@ -69,7 +69,15 @@ export const updateTaskProgress = async (taskId, progress) => {
   });
 };
 
-// ==================== AUTH HELPERS ============
+// Update user profile
+export const updateUserProfile = async (profileData) => {
+  return await apiCall('/user/profile', {
+    method: 'PUT',
+    body: JSON.stringify(profileData),
+  });
+};
+
+// ==================== AUTH HELPERS ====================
 
 // Save token after login (supports "Remember Me" feature)
 export const saveAuthToken = (token, rememberMe = false) => {
@@ -137,4 +145,4 @@ export const login = async (email, password) => {
     console.error('Login Error:', error);
     throw error;
   }
-};
+}
